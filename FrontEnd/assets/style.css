@@ -1,6 +1,6 @@
 /* http://meyerweb.com/eric/tools/css/reset/
-   v2.0 | 20110126
-   License: none (public domain)
+v2.0 | 20110126
+License: none (public domain)
 */
 
 html, body, div, span, applet, object, iframe,
@@ -125,6 +125,33 @@ li:hover {
 	text-align: center;
 	margin-bottom: 1em;
 }
+
+.filter {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-bottom: 50px;
+}
+
+.filter button {
+	border: 1px solid #1D6154;
+	border-radius: 50px;
+	padding: 9px 15px;
+	min-width: 70px;
+	background-color: white;
+	font-family: "syne", sans-serif;
+	font-size: 16px;
+	font-weight: 700;
+	color: #1D6154;
+	cursor: pointer;
+}
+
+.filter button.selected,
+.filter button:hover {
+	background-color: #1D6154;
+	color: white;
+}
+
 .gallery {
 	width: 100%;
 	display: grid;
