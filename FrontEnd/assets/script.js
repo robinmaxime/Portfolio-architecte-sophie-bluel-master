@@ -1,15 +1,119 @@
-/* Récupere la liste de tout les projets du portfolio et les convertis en format JS*/
-const reponse = await fetch('http://localhost:5678/api/works');
-const works = await reponse.json();
-
 const gallery = document.querySelector(".gallery");
+const filter = document.querySelector(".filter");
+let works = [];
 
-displayWorks();
-displayFilter();
+callApi();
 
 
 
 
+
+// MARK: - API
+
+/**
+ * Récupere la liste de tous les projets du portfolio et les convertis en format JS
+ */
+async function callApi() {
+    try {
+        const reponse = await fetch('http://localhost:5678/api/works');
+        works = await reponse.json();
+        displayFilter();
+        displayWorks();
+    } catch(error) {
+        filter.innerText = "Impossible de charger le contenu.";
+        console.log(error);
+    }
+}
+
+
+// MARK: - FILTER
+
+
+/**
+ * Affiche les bouttons filtre sur la page
+ */
+function displayFilter() {
+
+    // 1. On rajoute un bouton "tous"
+    createButtonFilter("Tous", undefined, true);
+
+    // 2. On récupère le tableau de catégories uniques
+    const categoriesUniques = generateUniqueCategories();
+
+    // 3. À chaque tour de boucle on rajoute un bouton au nom de la catégorie
+    for (let category of categoriesUniques) {
+        createButtonFilter(category.name, category.id, false);
+    }
+}
+
+
+/**
+ * Créer un boutton de filtre, paramètre un évenement et l'ajoute sur la page
+ * @param {String} name texte affiché dans le bouton
+ * @param {Number} categoryId l'id de la catégorie (undefined pour le bouton "tous")
+ * @param {Boolean} isSelected permet d'ajouter la class selected (qui colore le bouton)
+ */
+function createButtonFilter(name, categoryId, isSelected) {
+    // 1. Crée le boutton dans le DOM
+    const button = document.createElement("button");
+    button.innerText = name;
+
+    if (isSelected) {
+        button.classList.add("selected");
+    }
+    filter.appendChild(button);
+
+    // 2. Ajoute l'évenement button click
+    const buttonClick = function buttonClick(event) {
+        // attribue l'apparence "selected" au boutton clické
+        changeColorButton(event.target);
+        // l'ID peut être undefined notamment pour le bouton "tous"
+        displayWorks(categoryId);
+    };
+
+    button.addEventListener("click", buttonClick);
+}
+
+
+/**
+ * attribue l'apparence "selected" au boutton passé en paramètre
+ * @param {Element} button réference au bouton cliqué 
+ */
+function changeColorButton(button) {
+    // Supprime tout la classe selected à tout les boutons
+    const buttons = document.querySelectorAll(".filter button");
+    for (let button of buttons) {
+        button.classList.remove("selected");
+    }
+    // Ajoute la classe selected au bouton cliqué
+    button.classList.add("selected");
+}
+
+
+/**
+ * Crée un tableau de catégorie unique
+ * @returns un tableau de catégorie unique (name, Id)
+ */
+function generateUniqueCategories() {
+    // On crée un tableau vide de d'objet catégorie sans doublon
+    let categoriesUniques = [];
+
+    for (let work of works) {
+        //on cherche une categorie dans le tableau categoriesUniques qui aurait le même ID que le work actuellement itéré
+        const result = categoriesUniques.find(function (category) {
+            return category.id === work.category.id;
+        });
+        //si la fonction .find ne trouve rien, alors on rajoute l'objet catégorie dans notre tableau
+        if (result === undefined) {
+            categoriesUniques.push(work.category);
+        }
+    }
+    return categoriesUniques;
+}
+
+
+
+// MARK: - DISPLAY WORKS
 
 
 /**
@@ -21,17 +125,8 @@ function displayWorks(categoryId) {
     // 1. Efface le contenu de gallery
     gallery.innerHTML = "";
 
-    // 2. Crée un tableau filtré ou non filtré
-    let filteredWorks;
-    if (categoryId === undefined) {
-        //ne pas filtrer
-        filteredWorks = works;
-    } else {
-        //filtrer par catégories
-        filteredWorks = works.filter(function (work) {
-            return work.categoryId === categoryId;
-        }) ;
-    }
+    //2. On appelle la fonction filterWorks pour qu'elle nous retourne le tableau filtré.
+    const filteredWorks = filterWorks(categoryId);
 
     // 3. Affiche les cards précedemment filtré (ou non) en les créant dans le HTML
     for (let work of filteredWorks) {
@@ -55,75 +150,20 @@ function displayWorks(categoryId) {
 }
 
 
-
 /**
- * Créer un boutton de filtre, paramètre un évenement et l'ajoute sur la page
- * @param {String} name texte affiché dans le bouton
- * @param {Number} categoryId l'id de la catégorie passé en dataset (undefined pour le bouton "tous")
- * @param {Element} parentElement l'élement du DOM dans lequel le bouton doit être ajouté
- * @param {Boolean} isSelected permet d'ajouter la class selected (qui colore le bouton)
+ * Filtre les projets selon le numéro de catégorie indiqué
+ * @param {Number} categoryId l'id de la catégorie à filtrer ou undefined pour ne pas filtrer 
+ * @returns le tableau filtré
  */
-function addButtonFilter(name, categoryId, parentElement, isSelected) {
-    // 1. Crée le boutton
-    const button = document.createElement("button");
-    button.innerText = name;
-    if (categoryId !== undefined) {
-        button.dataset.categoryId = categoryId;
+function filterWorks(categoryId) {
+    let filteredWorks;
+
+    if (categoryId === undefined) {
+        filteredWorks = works;
+    } else {
+        filteredWorks = works.filter(function (element){
+        return categoryId === element.categoryId;
+        });
     }
-    if (isSelected) {
-        button.classList.add("selected");
-    }
-    parentElement.appendChild(button);
-
-    // 2. Ajoute l'évenement
-    button.addEventListener("click", function (event) {
-
-        // Supprime tout les classList "selected" de tous les boutons
-        const children = parentElement.children;
-        for (let child of children) {
-            child.classList.remove("selected");
-        }
-
-        // Ajoute le classList "selected" au bouton
-        event.target.classList.add("selected");
-
-        // Filtre : on récupère la catégorieID et on le passe en paramètre (on verifie s'il est défini et on le met en entier et plus en string)
-        // l'ID peut être undefined notament pour le bouton "tous"
-        const id = event.target.dataset.categoryId ? parseInt(event.target.dataset.categoryId) : undefined; 
-        displayWorks(id);
-    });
+    return filteredWorks;   
 }
-
-
-
-/**
- * Affiche les bouttons filtre sur la page
- */
-function displayFilter() {
-
-    // 1. On récupère la liste de tous les noms de catégories
-    let categoriesNames = [];
-    let categoriesIds = [];
-
-    for (let work of works) {
-        if (categoriesIds.includes(work.category.id) === false ) {
-            categoriesIds.push(work.category.id);
-            categoriesNames.push(work.category.name);
-        }
-    }
-
-    // 2. Récupère la reference à la div filter
-    const filter = document.querySelector(".filter");
-
-    // 3. On efface le contenu de la div filter
-    filter.innerHTML = "";
-
-    // 4. On rajoute un bouton "tous"
-    addButtonFilter("Tous", undefined, filter, true);
-
-    // 5. À chaque tour de boucle on rajoute un bouton au nom de la catégorie
-    for (let i = 0 ; i < categoriesIds.length ; i++ ) {
-        addButtonFilter(categoriesNames[i], categoriesIds[i], filter, false);
-    }
-}
-
