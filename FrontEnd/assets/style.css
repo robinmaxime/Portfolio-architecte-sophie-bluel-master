@@ -46,36 +46,61 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
-/** end reset css**/
+
+a {
+	text-decoration: none;
+}
+/* -------------------------------- end reset css --------------------------------*/
+
+/* -------------------------------- General -------------------------------- */
+
 body {
-	max-width: 1140px;
-	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
+	font-weight: 400;
+	background-color: #FFFEF8;
+	color: #3D3D3D;
 }
+
+.page-container {
+	max-width: 1140px;
+	margin:auto;
+}
+
 header {
 	display: flex;
 	justify-content: space-between;
 	margin: 50px 0
 }
-section {
-	margin: 50px 0
+
+main {
+	margin: 130px 90px 20px 90px;
 }
 
-h1{
+section {
+	margin: 50px 0;
+}
+
+h1 {
 	display: flex;
 	flex-direction: column;
+	gap: 4px;
 	font-family: 'Syne';
 	font-size: 22px;
 	font-weight: 800;
-	color: #B1663C
+	color: #B1663C;
+}
+
+h1 a {
+	color: #B1663C;
 }
 
 h1 > span {
 	font-family: 'Work Sans';
 	font-size:10px;
 	letter-spacing: 0.1em;
-;
+	font-weight: 400;
+	text-transform: uppercase;
 }
 
 h2{
@@ -84,46 +109,119 @@ h2{
 	font-size: 30px;
 	color: #1D6154
 }
+/* -------------------------------- EDIT MODE -------------------------------- */
+
+.edit {
+	display: flex;
+	background-color: black;
+	justify-content: center;
+	align-items: center;
+	gap: 20px; 
+}
+
+.edit.hidden {
+	display: none;
+}
+
+.edit-mode {
+	display: flex;
+	gap: 10px;
+	color: white;
+}
+
+.edit-button {
+	color: black;
+	background-color: white;
+	border-radius: 60px;
+	padding: 10px 23px;
+	margin: 10px 0;
+}
+
+
+/* -------------------------------- HEADER -------------------------------- */
+
 nav ul {
 	display: flex;
 	align-items: center;
 	list-style-type: none;
-
+	gap: 40px;
 }
 nav li {
 	padding: 0 10px;
 	font-size: 1.2em;
 }
 
-li:hover {
+nav li a {
+	color: black;
+}
+
+nav li a:hover {
 	color: #B1663C;
 }
+
+nav li a strong {
+	font-weight: 600;
+}
+
+nav li img {
+	width: 20px;
+	height: 20px;
+}
+
+
+/* -------------------------------- MAIN -------------------------------- */
+
 #introduction {
 	display: flex;
-	align-items: center;
+	align-items: start;
+	gap : 50px;
 }
+
 #introduction figure {
-	flex: 1
+	flex: 1;
 }
-#introduction img {
+
+#introduction figure img {
 	display: block;
 	margin: auto;
-	width: 80%;
+	width: 100%;
 }
 
 #introduction article {
-	flex: 1
+	flex: 1;
 }
+
+.modify {
+	display: inline-block;
+	color: black;
+	margin: 15px 0 15px 0;
+}
+
+.modify.hidden {
+	visibility: collapse;
+}
+
 #introduction h2 {
 	margin-bottom: 1em;
 }
 
 #introduction p {
-	margin-bottom: 0.5em;
+	margin-bottom: 1.3em;
 }
-#portfolio h2 {
-	text-align: center;
-	margin-bottom: 1em;
+
+#portfolio {
+	margin-top: 110px;
+}
+
+.title-portfolio {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 50px;
+}
+
+.title-portfolio .modify {
+	margin: 0 0 0 30px;
 }
 
 .filter {
@@ -137,8 +235,8 @@ li:hover {
 	border: 1px solid #1D6154;
 	border-radius: 50px;
 	padding: 9px 15px;
-	min-width: 70px;
-	background-color: white;
+	min-width: 100px;
+	background-color: transparent;
 	font-family: "syne", sans-serif;
 	font-size: 16px;
 	font-weight: 700;
@@ -162,41 +260,72 @@ li:hover {
 
 .gallery img {
 	width: 100%;
+}
 
+.gallery figcaption {
+	margin-top: 7px;
 }
-#contact {
-	width: 50%;
-margin: auto;
+
+/* -------------------------------- FORM in INDEX & LOGIN -------------------------------- */
+
+#contact,
+#login {
+	width: 380px;
+	margin: auto;
 }
-#contact > * {
+
+#contact > *,
+#login > * {
 	text-align: center;
-
 }
-#contact h2{
+
+#contact h2,
+#login h2 {
 	margin-bottom: 20px;
 }
-#contact form {
+
+#contact form,
+#login form {
 	text-align: left;
 	margin-top:30px;
 	display: flex;
 	flex-direction: column;
 }
 
-#contact input {
+#contact input,
+#login input {
 	height: 50px;
-	font-size: 1.2em;
+	font-size: 1.1em;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
-#contact label {
+
+#contact label,
+#login label {
 	margin: 2em 0 1em 0;
 }
+
 #contact textarea {
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-input[type="submit"]{
+#login {
+	margin-bottom: 380px;
+}
+
+#login form a {
+	color: #3D3D3D;
+	font-weight: 500;
+	align-self: center;
+	text-decoration: underline;
+}
+
+#login form a:hover {
+	color: #B1663C;
+}
+
+input[type="submit"] {
 	font-family: 'Syne';
 	font-weight: 700;
 	color: white;
@@ -204,12 +333,27 @@ input[type="submit"]{
 	margin : 2em auto ;
 	width: 180px;
 	text-align: center;
-	border-radius: 60px ;
+	border-radius: 60px;
+	cursor: pointer;
+	height: 36px;
 }
+
+.error-message {
+	padding-bottom: 25px;
+	text-align: center;
+	color: red;
+}
+
+.error-message.hidden {
+	display: none;
+}
+
+
+/* -------------------------------- FOOTER -------------------------------- */
 
 footer nav ul {
 	display: flex;
 	justify-content: flex-end;
 	margin: 2em
+	
 }
-

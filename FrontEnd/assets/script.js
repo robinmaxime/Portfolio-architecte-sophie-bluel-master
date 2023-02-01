@@ -1,23 +1,40 @@
+// Récupère dans le DOM l'emplacement des éléments
 const gallery = document.querySelector(".gallery");
 const filter = document.querySelector(".filter");
+
+
+// On récupère l'eventuel token qui est présent dans le sessionStorage
+const token = window.sessionStorage.getItem("token");
+// Si le token est présent, on considère l'utilisateur comme loggé
+const isUserLogged = token !== null; 
+
+
+// Contient l'ensemble des objets que nous retourera l'API
 let works = [];
 
+
 callApi();
+showEditModeIfNecessary();
 
 
 
+// MARK: - FONCTIONS
 
 
-// MARK: - API
+// MARK: - FONCTION callApi()
+
 
 /**
  * Récupere la liste de tous les projets du portfolio et les convertis en format JS
  */
 async function callApi() {
     try {
-        const reponse = await fetch('http://localhost:5678/api/works');
-        works = await reponse.json();
-        displayFilter();
+        const response = await fetch('http://localhost:5678/api/works');
+        works = await response.json();
+        
+        if (!isUserLogged) {
+            displayFilter();
+        }
         displayWorks();
     } catch(error) {
         filter.innerText = "Impossible de charger le contenu.";
@@ -26,8 +43,8 @@ async function callApi() {
 }
 
 
-// MARK: - FILTER
 
+// MARK: - FILTER
 
 /**
  * Affiche les bouttons filtre sur la page
@@ -37,15 +54,15 @@ function displayFilter() {
     // 1. On rajoute un bouton "tous"
     createButtonFilter("Tous", undefined, true);
 
-    // 2. On récupère le tableau de catégories uniques
+    // 2. On rajoute les boutons avec le nom des catégories.
+    // 2-1. On récupère le tableau de catégories uniques
     const categoriesUniques = generateUniqueCategories();
 
-    // 3. À chaque tour de boucle on rajoute un bouton au nom de la catégorie
+    // 2-2. À chaque tour de boucle on rajoute un bouton au nom de la catégorie
     for (let category of categoriesUniques) {
         createButtonFilter(category.name, category.id, false);
     }
 }
-
 
 /**
  * Créer un boutton de filtre, paramètre un évenement et l'ajoute sur la page
@@ -74,7 +91,6 @@ function createButtonFilter(name, categoryId, isSelected) {
     button.addEventListener("click", buttonClick);
 }
 
-
 /**
  * attribue l'apparence "selected" au boutton passé en paramètre
  * @param {Element} button réference au bouton cliqué 
@@ -88,7 +104,6 @@ function changeColorButton(button) {
     // Ajoute la classe selected au bouton cliqué
     button.classList.add("selected");
 }
-
 
 /**
  * Crée un tableau de catégorie unique
@@ -114,7 +129,6 @@ function generateUniqueCategories() {
 
 
 // MARK: - DISPLAY WORKS
-
 
 /**
  * Affiche l'ensemble des projets en les filtrant éventuellement avec la catégoryId
@@ -161,9 +175,34 @@ function filterWorks(categoryId) {
     if (categoryId === undefined) {
         filteredWorks = works;
     } else {
-        filteredWorks = works.filter(function (element){
-        return categoryId === element.categoryId;
+        filteredWorks = works.filter(function (work){
+        return categoryId === work.categoryId;
         });
     }
     return filteredWorks;   
+}
+
+
+
+// MARK: - FONCTION showEditModeIfNecessary()
+
+function showEditModeIfNecessary () {
+    // si l'utilisateur est connecté, on modifie la page index.html
+    if (isUserLogged) {
+        const log = document.getElementById("log");
+        // transforme le contenu de l'id de "login" en "logout"
+        log.innerText = "logout";
+        log.addEventListener("click", function (event){
+            // Empêche le comportement par défaut (rediriger vers la page login.js) 
+            event.preventDefault();
+            window.sessionStorage.removeItem("token");
+            document.location.reload();
+        })
+        // On récupère l'emplacement des élements qui ont la classe hidden dans le DOM
+        const hiddenElements = document.querySelectorAll(".edit.hidden, .modify.hidden");
+        for (let element of hiddenElements) {
+            // Affiche les boutons "modifier" et le block noir "mode édition"
+            element.classList.remove("hidden");
+        }
+    }
 }
