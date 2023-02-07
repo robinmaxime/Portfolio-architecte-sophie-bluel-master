@@ -1,42 +1,18 @@
-import { isUserLogged } from "./script.js";
-import { addModaleCloseAction, showModale, displayWorksModale } from "./modale.js";
+import { works } from "./data.js";
 
 // Récupère dans le DOM l'emplacement des éléments
 const gallery = document.querySelector(".gallery");
 const filter = document.querySelector(".filter");
 
-// Contient l'ensemble des objets que nous retourera l'API
-export let works = [];
-
-// MARK: - FONCTION callApi()
 
 
-/**
- * Récupere la liste de tous les projets du portfolio et les convertis en format JS
- */
-export async function callApi() {
-    try {
-        const response = await fetch('http://localhost:5678/api/works');
-        works = await response.json();
-        
-        if (!isUserLogged) {
-            displayFilter();
-        }
-        displayWorks();
-    } catch(error) {
-        filter.innerText = "Impossible de charger le contenu.";
-        console.log(error);
-    }
-}
+// MARK: - FILTRAGE DES DONNÉES
 
-
-
-// MARK: - FILTER
 
 /**
  * Affiche les bouttons filtre sur la page
  */
-function displayFilter() {
+export function displayFilter() {
 
     // 1. On rajoute un bouton "tous"
     createButtonFilter("Tous", undefined, true);
@@ -69,7 +45,7 @@ function createButtonFilter(name, categoryId, isSelected) {
 
     // 2. Ajoute l'évenement button click
     const buttonClick = function buttonClick(event) {
-        // attribue l'apparence "selected" au boutton clické
+        // attribue l'apparence "selected" au boutton clické dans le DOM
         changeColorButton(event.target);
         // l'ID peut être undefined notamment pour le bouton "tous"
         displayWorks(categoryId);
@@ -115,14 +91,14 @@ function generateUniqueCategories() {
 
 
 
-// MARK: - DISPLAY WORKS
+// MARK: - AFFICHAGE DES DONNÉES
 
 
 /**
  * Affiche l'ensemble des projets en les filtrant éventuellement avec la catégoryId
  * @param {Number} categoryId l'id de la catégorie (undefined pour tout afficher) 
  */
-function displayWorks(categoryId) {
+export function displayWorks(categoryId) {
 
     // 1. Efface le contenu de gallery
     gallery.innerHTML = "";
@@ -151,7 +127,6 @@ function displayWorks(categoryId) {
     }
 }
 
-
 /**
  * Filtre les projets selon le numéro de catégorie indiqué
  * @param {Number} categoryId l'id de la catégorie à filtrer ou undefined pour ne pas filtrer 
@@ -169,40 +144,3 @@ function filterWorks(categoryId) {
     }
     return filteredWorks;   
 }
-
-
-
-// MARK: - FONCTION showEditModeIfNecessary()
-
-export function showEditModeIfNecessary () {
-    // si l'utilisateur est connecté, on modifie la page index.html
-    if (isUserLogged) {
-        const log = document.getElementById("log");
-        // transforme le contenu de l'id de "login" en "logout"
-        log.innerText = "logout";
-        log.addEventListener("click", function (event){
-            // Empêche le comportement par défaut (rediriger vers la page login.js) 
-            event.preventDefault();
-            window.sessionStorage.removeItem("token");
-            document.location.reload();
-        })
-        // On récupère l'emplacement des élements qui ont la classe hidden dans le DOM
-        const hiddenElements = document.querySelectorAll(".edit.hidden, .modify.hidden");
-        for (let element of hiddenElements) {
-            // Affiche les boutons "modifier" et le block noir "mode édition"
-            element.classList.remove("hidden");
-        }
-
-        // On ajoute la fonction d'affichage de la modale sur le bouton modifier de "mes projets"
-        const modifyProjectButton = document.querySelector("#portfolio .modify");
-        // Crée un eventListener au click du bouton modifier (mes projets)
-        modifyProjectButton.addEventListener("click", function (event){
-            event.preventDefault();
-            showModale();
-            displayWorksModale();
-        });
-        // Ajoute l'action de fermeture de la modale
-        addModaleCloseAction();
-    }
-}
-

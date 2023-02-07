@@ -418,7 +418,7 @@ footer nav ul {
 	height: 12px;
 }
 
-.modale main {
+.modale-main {
 	margin: 0 105px 48px 105px;
 }
 
@@ -496,3 +496,12 @@ footer nav ul {
 	color: #D65353;
 }
 
+@keyframes modale-opacity {
+	from {opacity: 0;}
+	to {opacity: 1;}
+}
+
+.modale-animation {
+	animation-name: modale-opacity;
+	animation-duration: 0.5s;
+}
