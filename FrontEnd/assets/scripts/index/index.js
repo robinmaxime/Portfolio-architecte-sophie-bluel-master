@@ -6,11 +6,25 @@ edit.js : Manipulation du DOM pour afficher le mode édition
 modale.js : Manipulation du DOM pour afficher la modale
 */
 
-import { showEditModeIfNecessary } from "./edit.js";
+import { showEditModeIfNecessary, isUserLogged } from "./edit.js";
 import { loadGalleryFromAPI } from "./data.js";
+import { displayFilter, displayWorks } from "./gallery.js";
 
 // Charge les données depuis l'API et les affiche dans la gallerie
-loadGalleryFromAPI();
+loadGalleryFromAPI().then(success => {
+    if (success) {
+        if (!isUserLogged()) {
+            // Si l'utilisateur n'est pas identifié, affichage des boutons fitres
+            displayFilter();
+        }
+        // Affichage de la gallerie
+        displayWorks();
+        
+    } else {
+        // Affichage d'un message d'erreur
+        document.querySelector(".filter").innerText = "Impossible de charger le contenu.";
+    }
+})
 
 // Affiche le mode édition si l'utilisateur est identifié
 showEditModeIfNecessary();

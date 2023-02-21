@@ -1,8 +1,4 @@
-import { displayFilter, displayWorks } from "./gallery.js";
-import { isUserLogged } from "./edit.js";
-import { displayWorksModale } from "./modale.js";
-
-// Contient l'ensemble des objets que nous retourera l'API
+// Contient l'ensemble des projet de la gallerie
 export let works = [];
 
 
@@ -12,6 +8,7 @@ export let works = [];
 
 /**
  * Récupere la liste de tous les projets du portfolio et les convertit en format JS
+ * @returns une promesse au format Booleen (true si les données sont chargées depuis l'API)
  */
 export async function loadGalleryFromAPI() {
     try {
@@ -20,20 +17,12 @@ export async function loadGalleryFromAPI() {
         if (response.status === 200) {
             // stockage de la réponse au format JS
             works = await response.json();
-            
-            if (!isUserLogged()) {
-                // Si l'utilisateur n'est pas identifié, affichage des boutons fitres
-                displayFilter();
-            }
-            // Affichage de la gallerie
-            displayWorks();
-        } else {
-            // Affichage d'un message d'erreur
-            document.querySelector(".filter").innerText = `Impossible de charger le contenu (code : ${response.status}).`;
+            return true;
         }
     } catch(error) {
-        document.querySelector(".filter").innerText = "Impossible de charger le contenu.";
+        console.log(error);
     }
+    return false;
 }
 
 
@@ -44,6 +33,7 @@ export async function loadGalleryFromAPI() {
  * Supprime dans l'API le projet désigné et raffraichit l'interface
  * @param {Number} workId : l'id du projet dans l'API
  * @param {Number} workIndex : l'index du projet dans le tableau works
+ * @returns retourne True si la suppression est un succès
  */
 export async function deleteWork(workId, workIndex) {
 
@@ -52,7 +42,7 @@ export async function deleteWork(workId, workIndex) {
         const token = window.sessionStorage.getItem("token");
         if (token === null) {
             console.log("Pas de token trouvé");
-            return;
+            return false;
         } 
         // Execution de la requête DELETE avec le token en headers
         const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
@@ -63,9 +53,7 @@ export async function deleteWork(workId, workIndex) {
         if (response.ok) {
             // Supprime l'objet dans le tableau WORKS à l'index indiqué
             works.splice(workIndex, 1);
-            // Rafraichit l'affichage de la modale et de la gallerie
-            displayWorks();
-            displayWorksModale();
+            return true;
 
         } else {
             console.log(`erreur : ${response.status}`);
@@ -74,4 +62,61 @@ export async function deleteWork(workId, workIndex) {
     } catch(error) {
         console.log(error);
     }
+    return false;
+}
+
+// MARK: - CHARGEMENT DES DONNÉES DEPUIS L'API
+
+/**
+ * Charge depuis l'API les catégories
+ * @returns un tableau contenant les catégories
+ */
+export async function loadCategoriesFromAPI() {
+    try {
+        const response = await fetch("http://localhost:5678/api/categories");
+        if (response.status === 200) {
+            const categories = await response.json();
+            return categories;
+        }
+    } catch(error) {
+        console.log(error);
+    }
+    return [];
+}
+
+// MARK: - ENVOI DE DONNÉES VERS L'API
+
+/**
+ * Envoi les données d'un formulaire à l'API pour créer un nouveau projet
+ * @param {Element} form Élement du dom à passer en paramètre
+ * @returns Le nouveau projet crée par l'API
+ */
+export async function sendNewWork(form) {
+    try {
+        // Récupère le token dans le sessionStorage et vérifie qu'il ne soit pas null
+        const token = window.sessionStorage.getItem("token");
+        if (token === null) {
+            console.log("Pas de token trouvé");
+            return undefined;
+        } 
+
+        // envoi de la requête POST avec un body FormData 
+        // (ici on passe le formulaire du dom en paramètre pour qu'il puisse construire automatiquement le FormData)
+        const response = await fetch(`http://localhost:5678/api/works`, {
+            method: "POST",
+            // Penser à ne pas passer de content type sinon erreur "Multipart: Boundary not found"
+            headers: {"Authorization": `Bearer ${token}`},
+            body: new FormData(form)
+        });
+        if (response.ok) {
+            const newWork = await response.json();
+            works.push(newWork);
+            return newWork;
+        }
+
+
+    } catch(error) {
+        console.log(error);
+    }
+    return undefined;
 }

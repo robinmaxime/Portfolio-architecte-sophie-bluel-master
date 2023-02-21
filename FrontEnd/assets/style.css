@@ -306,11 +306,14 @@ nav li img {
 }
 
 #contact input,
-#login input {
+#login input,
+.modale input,
+.modale select {
 	height: 50px;
 	font-size: 1.1em;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+	padding: 0 16px;
 }
 
 #contact label,
@@ -339,7 +342,7 @@ nav li img {
 }
 
 input[type="submit"],
-.modale-modify button {
+.modale button {
 	font-family: 'Syne', sans-serif;
 	font-weight: 700;
 	color: white;
@@ -350,6 +353,7 @@ input[type="submit"],
 	border-radius: 60px;
 	cursor: pointer;
 	height: 36px;
+	border: none;
 }
 
 .error-message {
@@ -391,6 +395,16 @@ footer nav ul {
 	display: none;
 }
 
+@keyframes modale-opacity {
+	from {opacity: 0;}
+	to {opacity: 1;}
+}
+
+.modale-animation {
+	animation-name: modale-opacity;
+	animation-duration: 0.5s;
+}
+
 .modale-content {
 	min-height: 300px;
 	width: 630px;
@@ -400,26 +414,35 @@ footer nav ul {
 
 .modale header {
 	display: flex;
-	justify-content: flex-end;
+	justify-content: space-between;
 	margin : 0;
-	padding: 28px 28px 10px 0;
+	padding: 28px 28px 10px 28px;
 }
 
 .modale header a {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 24px;
 	height: 24px;
+	cursor: pointer;
+}
+
+.back-button.hidden {
+	visibility: hidden;
 }
 
 .modale header a img {
-	width: 12px;
 	height: 12px;
 }
 
-.modale-main {
+.modale-main,
+.modale-addphoto {
 	margin: 0 105px 48px 105px;
+}
+
+.modale-main.hidden,
+.modale-addphoto.hidden {
+	display: none;
 }
 
 .modale h2 {
@@ -431,6 +454,13 @@ footer nav ul {
 	text-align: center;
 }
 
+.modale button {
+	margin: 0;
+}
+
+
+/* MODALE-MAIN */
+
 .modale-gallery {
 	width: 100%;
 	display: grid;
@@ -438,7 +468,7 @@ footer nav ul {
 	grid-column-gap: 8px;
 	grid-row-gap: 11px;
 	padding-bottom: 47px;
-	border-bottom: 1px solid #B3B3B3;
+
 }
 
 .modale-gallery figure {
@@ -480,28 +510,94 @@ footer nav ul {
 }
 
 .modale-modify {
-	margin-top: 38px;
+	padding-top: 38px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	row-gap: 25px;
-}
-
-.modale-modify button {
-	margin: 0;
-	border: none;
+	border-top: 1px solid #B3B3B3;
 }
 
 .modale-modify a {
 	color: #D65353;
 }
 
-@keyframes modale-opacity {
-	from {opacity: 0;}
-	to {opacity: 1;}
+/* MODALE-ADDPHOTO */
+
+
+
+.modale-addphoto form label {
+	margin-bottom: 10px;
 }
 
-.modale-animation {
-	animation-name: modale-opacity;
-	animation-duration: 0.5s;
+.modale-addphoto input,
+.modale-addphoto select {
+	margin-bottom: 21px;
+}
+
+.image-selector {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 180px;
+	background-color: #E8F1F7;
+	margin-bottom: 30px;
+}
+
+.image-selector .image-selected {
+	height: 100%;
+}
+
+.image-selector .image-unselected img {
+	height: 58px;
+	width: 58px;
+	margin-bottom: 21px;
+}
+
+.image-unselected {
+	text-align: center;
+}
+
+.image-selector .image-selected.hidden,
+.image-selector .image-unselected.hidden {
+	display: none;
+}
+
+.image-selector input[type="file"] {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.image-selector label {
+	display: block;
+	margin-bottom: 8px;
+	background-color: #CBD6DC;
+	color: #306685;
+	font-weight: 500;
+	font-family: 'Work Sans';
+	border-radius: 60px;
+	cursor: pointer;
+	padding: 12px 20px;
+}
+
+.modale-addphoto .modale-addinfo {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 26px;
+}
+
+.modale-addinfo select {
+	border-right: 21px solid transparent;
+}
+
+.modale-modify .validate-button {
+	margin : 0;
+}
+
+.modale-modify .validate-button.disabled {
+	background-color: #A7A7A7;
 }

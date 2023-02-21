@@ -81,7 +81,8 @@
 	<div class="modale hidden">
 		<div class="modale-content">
 			<header>
-				<a class="close-button" href="#"><img src="./assets/icons/Close.png" alt="Icône de fermeture"></a>
+				<a class="back-button"><img src="./assets/icons/Back.png" alt="Icône de retour"></a>
+				<a class="close-button"><img src="./assets/icons/Close.png" alt="Icône de fermeture"></a>
 			</header>
 			<div class="modale-main">
 				<h2>Galerie photo</h2>
@@ -89,9 +90,37 @@
 
 				</div>
 				<div class="modale-modify">
-					<button>Ajouter une photo</button>
+					<button class="add-button">Ajouter une photo</button>
 					<a href="#">Supprimer la galerie</a>
 				</div>
+			</div>
+			<div class="modale-addphoto hidden">
+				<h2>Ajout photo</h2>
+				<form id="addphoto-form" method="get" action="#">
+					<div class="image-selector">
+						<img class="image-selected hidden" src="#" alt="image selectionnée">
+						<div class="image-unselected">
+							<img src="/FrontEnd/assets/icons/Frame.png" alt="image vide">
+							<input type="file" name="image" id="image">
+							<label for="image">+ Ajouter photo</label>
+							<p>jpg, png : 4mo max</p>
+						</div>
+					</div>
+					<div class="modale-addinfo">
+						<label for="title">Titre</label>
+						<input type="text" name="title" id="title">
+						<label for="category">Catégorie</label>
+						<select name="category" id="category">
+							<option></option>
+						</select>
+					</div>
+					<div class="modale-modify">
+						<input class="validate-button disabled" type="submit" value="Valider">
+						<div class="error-message hidden"></div>
+					</div>
+				</form>
+				
+				
 			</div>
 		</div>
 	</div>

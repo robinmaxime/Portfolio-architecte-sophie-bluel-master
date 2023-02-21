@@ -1,5 +1,5 @@
 // Récupère dans le DOM l'emplacement des éléments
-const errorMessage = document.querySelector(".error-message");
+const errorMessageElem = document.querySelector(".error-message");
 const loginForm = document.querySelector("#login form");
 const emailInput = document.getElementById("user-email");
 const passwordInput = document.getElementById("user-password");
@@ -16,18 +16,18 @@ loginForm.addEventListener("submit", checkLogin);
 
 /**
  * Affiche le message d'erreur
- * @param {"String"} message indiquer le message d'erreur visible par l'utilisateur 
+ * @param {String} message indiquer le message d'erreur visible par l'utilisateur 
  */
-function showMessageError (message) {
-    errorMessage.innerText = message;
-    errorMessage.classList.remove("hidden");
+function showMessageError(message) {
+    errorMessageElem.innerText = message;
+    errorMessageElem.classList.remove("hidden");
 }
 
 /**
  * Masque le message d'erreur
  */
 function hideMessageError() {
-    errorMessage.classList.add("hidden");
+    errorMessageElem.classList.add("hidden");
 }
 
 /**
@@ -35,7 +35,7 @@ function hideMessageError() {
  * @param {Event} event l'évènement généré par le DOM 
  * @returns 
  */
-async function checkLogin (event){
+async function checkLogin(event) {
 
     // Empeche le comportement par défaut du nagivateur (rechargement de la page)
     event.preventDefault();
@@ -58,7 +58,7 @@ async function checkLogin (event){
 
     try {
         // Crée la requête POST pour l'API qui nous retourne notamment un statut OK ou pas OK
-        let response = await fetch("http://localhost:5678/api/users/login", {
+        const response = await fetch("http://localhost:5678/api/users/login", {
             method: "POST",
             headers: {"Content-Type": "application/json;charset=utf-8"}, 
             body: JSON.stringify(user)
@@ -66,7 +66,7 @@ async function checkLogin (event){
         
         if (response.ok) {
             // Si la response.ok est true, on transforme au format JS
-            let result = await response.json();
+            const result = await response.json();
             // On vérifie si on a bien obtenu un token
             if (result.token !== undefined) {
                 //On stocke dans le sessionStorage
@@ -74,7 +74,7 @@ async function checkLogin (event){
                 //On redirige vers la page index.html
                 document.location.href = "index.html";
             } else {
-                showMessageError("Erreur innatendue (token non présent).");
+                showMessageError("Erreur inattendue (token non présent).");
             }
         } else {
             /* Si la response.ok est false, on affiche un message d'erreur 
