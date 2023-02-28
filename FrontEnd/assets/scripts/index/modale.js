@@ -272,13 +272,17 @@ function previewPhoto() {
     // Concerve uniquement le premier fichier
     const firstFile = files[0];
     if (firstFile) {
-        // Si le fichier existe, assigne le fichier en source de l'image
-        const imageSelectedElem = document.querySelector(".image-selected");
-        imageSelectedElem.src = URL.createObjectURL(firstFile);
-        // Masque le selecteur d'image et affiche la previsualisation à la place
-        const imageUnselectedElem = document.querySelector(".image-unselected");
-        imageUnselectedElem.classList.add("hidden");
-        imageSelectedElem.classList.remove("hidden");
+        if (firstFile.size < 4194304) {
+            // Si le fichier existe, assigne le fichier en source de l'image
+            const imageSelectedElem = document.querySelector(".image-selected");
+            imageSelectedElem.src = URL.createObjectURL(firstFile);
+            // Masque le selecteur d'image et affiche la previsualisation à la place
+            const imageUnselectedElem = document.querySelector(".image-unselected");
+            imageUnselectedElem.classList.add("hidden");
+            imageSelectedElem.classList.remove("hidden");
+        } else {
+            showMessageError("Fichier trop volumineux");
+        }
     }
 }
 
